@@ -433,7 +433,7 @@ body { padding-top: 32px; }
         <div class="field-row single">
           <div class="field">
             <label>الاسم كامل <span class="req">*</span></label>
-            <input type="text" id="full_name" placeholder="الاسم الثلاثي أو الرباعي" pattern="^\S+\s+\S+\s+\S+" required>
+            <input type="text" id="full_name" placeholder="الاسم الثلاثي أو الرباعي" pattern="\S+\s+\S+\s+\S+(\s+\S+)*" required>
             <span class="field-error">الاسم لا بد أن يكون ثلاثيًا على الأقل</span>
           </div>
         </div>
@@ -754,8 +754,13 @@ function validateStep(step) {
       el.classList.remove('error');
       if (el.pattern) {
         const regex = new RegExp('^(?:' + el.pattern.replace(/^\^|\$$/g, '') + ')$');
-        if (!regex.test(el.value)) { el.classList.add('error'); valid = false; }
+        if (!regex.test(el.value.trim())) { el.classList.add('error'); valid = false; }
         else { el.classList.remove('error'); }
+      }
+      if (el.min || el.max) {
+        const num = parseFloat(el.value);
+        if (el.min && num < parseFloat(el.min)) { el.classList.add('error'); valid = false; }
+        if (el.max && num > parseFloat(el.max)) { el.classList.add('error'); valid = false; }
       }
     }
   });
